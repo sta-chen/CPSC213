@@ -1,0 +1,43 @@
+java Endianness 1 2 3 4
+The big    endian integer value at address 0 is 16909060
+The little endian integer value at address 0 is 67305985
+
+
+java Endianness 0 0 0 1
+To test whether the program constructs positive integer correctly.
+
+Expected value for big-endian = 1
+Expected value for little-endian = 16777216
+Output:
+The big    endian integer value at address 0 is 1
+The little endian integer value at address 0 is 16777216
+
+
+java Endianness 1 0 0 0
+To test whether the program constructs positive integer correctly.
+
+Expected value for big-endian = 16777216
+Expected value for little-endian = 1
+Output:
+The big    endian integer value at address 0 is 16777216
+The little endian integer value at address 0 is 1
+
+
+java Endianness ff ff ff 00
+To test whether the program constructs negative integer correctly.
+
+Expected value for big-endian = -256
+Expected value for little-endian = 16777215
+Output:
+The big    endian integer value at address 0 is -256
+The little endian integer value at address 0 is 16777215
+
+
+java Endianness 80 00 00 00
+To test whether the program constructs negative integer correctly.
+
+Expected value for big-endian = -2147483648
+Expected value for little-endian = 128
+Output:
+The big    endian integer value at address 0 is -2147483648
+The little endian integer value at address 0 is 128

@@ -1,0 +1,2 @@
+Example: 0x11111111
+In general, if the number is symmetrical (i.e. it's the same when you read it backwards), this number has the identical big- and little-endian representations.

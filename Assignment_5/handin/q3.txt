@@ -1,0 +1,7 @@
+I found that the struct integer is created on the heap using malloc in integer_create, but it's never freed, which makes a memory leak. So I use rc_malloc instead to make the struct integer has a functionality of reference counting. With the reference counting, we could make sure every memory is freed properly after they are used to avoid the memory leak.
+
+1. Change malloc in integer.c to rc_malloc.
+2. In set: If the set contains the value we want to add, return.
+   Else, we will add the value to the set and use rc_keep_ref to track the reference counting.
+   We need to check the reference counting in set_empty, which assign set[i] to NULL. Therefore, I add an if statement to check whether set[i] is NULL, and if true: call rc_free_ref and assignment it to NULL.
+3. In stack: struct integer* integer is a parameter used in element->integer, thus we will track the reference counting in element->integer not element (i.e. struct element* element still could use malloc not rc_malloc). So I add rc_free_ref(element->integer) in stack_pop_and_print().

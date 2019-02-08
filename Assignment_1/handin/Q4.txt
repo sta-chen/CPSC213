@@ -1,0 +1,7 @@
+The Intel CPU uses little endianness and what we calculated is wrong. Therefore, we guess the DF-224 uses big endianness. 
+RA in hex: 0x0007f665
+D in hex: 0xffde5181
+Thus, 	the real RA in hex should be 0x65f60700
+	the real D in hex should be 0x8151deff
+i.e. in decimal, the real RA: 1710622464
+		 the real D: -2125340929

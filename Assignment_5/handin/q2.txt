@@ -1,0 +1,2 @@
+e is freed before they are printed, which caused dangling pointers.
+I called strncpy in pop() to copy the e->name before freeing e.
