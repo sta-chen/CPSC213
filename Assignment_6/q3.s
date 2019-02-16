@@ -60,14 +60,16 @@ add r7, r6      # r6 = s[j].average - s[j - 1].average
 bgt r6, next_inner_loop     # if s[j].average > s[j - 1].average goto next_inner_loop
 beq r6, next_inner_loop     # if s[j].average == s[j - 1].average goto next_inner_loop
 
-#swap
+#swap if s[j].average < s[j - 1].average
 ld $6, r3       # r3 = 6 = sizeof(struct Student) / 4 = k
-swap_loop:
+swap_loop:  # swap every element in the struct
+            # *a = &s[j - 1]
+            # *b = &s[j]
 beq r3, next_inner_loop     # if k == 0 goto next_inner_loop
-ld (r4), r6     # r6 = s[j - 1] = *a
-ld (r5), r7     # r7 = s[j] = *b
-st r7, (r4)     # s[j - 1] = s[j]
-st r6, (r5)     # s[j] = s[j - 1]
+ld (r4), r6     # r6 = *a
+ld (r5), r7     # r7 = *b
+st r7, (r4)     # *a = *b
+st r6, (r5)     # *b = *a
 inca r4         # a++
 inca r5         # b++
 dec r3          # k--
