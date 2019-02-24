@@ -7,14 +7,16 @@
 
 #include <stdio.h>
 int a[] = (int[10]) {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+int* p = a;
 
 void bar(int m, int n) {
-    a[n] = a[n] + m;
+    p[n] = p[n] + m;
 }
 
 void foo() {
-    int a = 1;
-    int b = 2;
+    int a, b;
+    a = 1;
+    b = 2;
     bar(3, 4);
     bar(1, 2);
 }
@@ -24,7 +26,7 @@ void foo() {
 int main(int argc, char** argv) {
     foo();
     for (int i = 0; i < 10; i++) {
-        printf("%d ", a[i]);
+        printf("%d\n", a[i]);
     }
     
     return 0;
