@@ -6,50 +6,64 @@
  * declaration and initialzation of class table
  */
 struct Node_class Node_class_table = {
-  NULL,  /* abstract compareTo */
-  NULL,  /* abstract printNode* */
-  Node_insert,
-  Node_print,
+    NULL,  /* abstract compareTo */
+    NULL,  /* abstract printNode* */
+    Node_insert,
+    Node_print,
+    Node_delete,
+    
 };
 
 /**
  * constructor
  */
 void Node_ctor(void* thisv) {
-  struct Node* this = thisv;
-  this->left = NULL;
-  this->right = NULL;
+    struct Node* this = thisv;
+    this->left = NULL;
+    this->right = NULL;
 }
 
 /**
  * insert
  */
 void Node_insert(void* thisv, void* nodev) {
-  struct Node* this = thisv;
-  struct Node* node = nodev;
-  int c = this->class->compareTo(this, node);
-  if (c > 0) {
-    if (this->left == NULL)
-      this->left = node;
-    else
-      this->class->insert(this->left, node);
-  } else {
-    if (this->right == NULL)
-      this->right = node;
-    else
-      this->class->insert(this->right, node);
-  }
+    struct Node* this = thisv;
+    struct Node* node = nodev;
+    int c = this->class->compareTo(this, node);
+    if (c > 0) {
+        if (this->left == NULL)
+            this->left = node;
+        else
+            this->class->insert(this->left, node);
+    } else {
+        if (this->right == NULL)
+            this->right = node;
+        else
+            this->class->insert(this->right, node);
+        
+    }
 }
 
 /**
  * print
  */
 void Node_print(void* thisv) {
-  struct Node* this = thisv;
-  if (this->left != NULL)
-    this->class->print(this->left);
-  this->class->printNode(this);
-  if (this->right != NULL)
-    this->class->print(this->right);
+    struct Node* this = thisv;
+    if (this->left != NULL)
+        this->class->print(this->left);
+    this->class->printNode(this);
+    if (this->right != NULL)
+        this->class->print(this->right);
+}
+
+void Node_delete(void* thisv) {
+    if (thisv == NULL) {
+        return;
+    }
+    struct Node* this = thisv;
+    Node_delete(this->left);
+    Node_delete(this->right);
+    free(this);
+    
 }
 
