@@ -26,16 +26,61 @@ end:    ld $0, r0               # r0 = 0
 #data
 .pos 0x1000
 src:
-.long 1                  # src[0]
-.long 2                  # src[1]
-.long 0x25C              # src[2]
-.long 0x0000FFFF         # src[3]
-.long 0xFFFF6001         # src[4]
-.long 0x60026003         # src[5]
-.long 0x60046005         # src[6]
-.long 0x60066007         # src[7]
-.long 0xF0000000         # src[8]
-.long 0                  # src[9]
+.long 1
+.long 2
+.long 0x2080
+.long 0x2080
+.long 0x2080
+.long 0x2080
+.long 0x2080
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0xff00ff00            # nop slide
+.long 0x0100ffff            # ld $-1, r1
+.long 0xffffff00            # finished with nop
+.long 0x0200ffff            # ld $-1, r2
+.long 0xffffff00            # finished with nop
+.long 0x0300ffff            # ld $-1, r3
+.long 0xffffff00            # finished with nop
+.long 0x0400ffff            # ld $-1, r4
+.long 0xffffff00            # finished with nop
+.long 0x0500ffff            # ld $-1, r5
+.long 0xffffff00            # finished with nop
+.long 0x0600ffff            # ld $-1, r6
+.long 0xffffff00            # finished with nop
+.long 0x0700ffff            # ld $-1, r7
+.long 0xffffff00            # finished with nop
+.long 0x0000ffff            # ld $-1, r0
+.long 0xffffff00            # finished with nop
+.long 0xff00f000            # nop then halt
+.long 0
 
 
 .pos 0x2000

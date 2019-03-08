@@ -53,14 +53,14 @@ public class CPU extends AbstractSM213CPU {
     switch (opCode) {
       case 0x0:
       case 0xb:
-        long opExt = mem.readIntegerUnaligned (pcVal);
-        pcVal += 4;
-        insOpExt.set    (opExt);
-        instruction.set (ins[0].value() << 40 | ins[1].value() << 32 | opExt);
-        break;
+      long opExt = mem.readIntegerUnaligned (pcVal);
+      pcVal += 4;
+      insOpExt.set    (opExt);
+      instruction.set (ins[0].value() << 40 | ins[1].value() << 32 | opExt);
+      break;
       default:
-        insOpExt.set    (0);
-        instruction.set (ins[0].value() << 40 | ins[1].value() << 32);
+      insOpExt.set    (0);
+      instruction.set (ins[0].value() << 40 | ins[1].value() << 32);
     }
     pc.set (pcVal);
   }
@@ -84,117 +84,119 @@ public class CPU extends AbstractSM213CPU {
     switch (insOpCode.get()) {
 
       case 0x0: // ld $i, d .............. 0d-- iiii iiii
-        reg.set (insOp0.get(), insOpExt.get());
-        break;
+      reg.set (insOp0.get(), insOpExt.get());
+      break;
 
       case 0x1: // ld o(rs), rd .......... 1psd  (p = o / 4)
-        reg.set (insOp2.get(), mem.readInteger ((insOp0.get() << 2) + reg.get (insOp1.get())));
-        break;
+      reg.set (insOp2.get(), mem.readInteger ((insOp0.get() << 2) + reg.get (insOp1.get())));
+      break;
 
       case 0x2: // ld (rs, ri, 2), rd .... 2sid
-        reg.set (insOp2.get(), mem.readInteger (reg.get (insOp0.get()) + (reg.get (insOp1.get())<<2)));
-        break;
+      reg.set (insOp2.get(), mem.readInteger (reg.get (insOp0.get()) + (reg.get (insOp1.get())<<2)));
+      break;
 
       case 0x3: // st rs, o(rd) .......... 3spd  (p = o / 4)
-        mem.writeInteger ((insOp1.get() << 2) + reg.get (insOp2.get()), reg.get (insOp0.get()));
-        break;
+      mem.writeInteger ((insOp1.get() << 2) + reg.get (insOp2.get()), reg.get (insOp0.get()));
+      break;
 
       case 0x4: // st rs, (rd, ri, 4) .... 4sdi
-        mem.writeInteger (reg.get (insOp1.get()) + (reg.get (insOp2.get())<<2), reg.get (insOp0.get()));
-        break;
+      mem.writeInteger (reg.get (insOp1.get()) + (reg.get (insOp2.get())<<2), reg.get (insOp0.get()));
+      break;
 
       case 0x6: // ALU ................... 6-sd
-        switch (insOp0.get()) {
+      switch (insOp0.get()) {
 
           case 0x0: // mov rs, rd ........ 60sd
-            reg.set (insOp2.get(), reg.get (insOp1.get()));
-            break;
+          reg.set (insOp2.get(), reg.get (insOp1.get()));
+          break;
 
           case 0x1: // add rs, rd ........ 61sd
-            reg.set (insOp2.get(), reg.get (insOp1.get()) + reg.get (insOp2.get()));
-            break;
+          reg.set (insOp2.get(), reg.get (insOp1.get()) + reg.get (insOp2.get()));
+          break;
 
           case 0x2: // and rs, rd ........ 62sd
-            reg.set (insOp2.get(), reg.get (insOp1.get()) & reg.get (insOp2.get()));
-            break;
+          reg.set (insOp2.get(), reg.get (insOp1.get()) & reg.get (insOp2.get()));
+          break;
 
           case 0x3: // inc rr ............ 63-r
-            reg.set (insOp2.get(), reg.get (insOp2.get()) + 1);
-            break;
+          reg.set (insOp2.get(), reg.get (insOp2.get()) + 1);
+          break;
 
           case 0x4: // inca rr ........... 64-r
-            reg.set (insOp2.get(), reg.get (insOp2.get()) + 4);
-            break;
+          reg.set (insOp2.get(), reg.get (insOp2.get()) + 4);
+          break;
 
           case 0x5: // dec rr ............ 65-r
-            reg.set (insOp2.get(), reg.get (insOp2.get()) - 1);
-            break;
+          reg.set (insOp2.get(), reg.get (insOp2.get()) - 1);
+          break;
 
           case 0x6: // deca rr ........... 66-r
-            reg.set (insOp2.get(), reg.get (insOp2.get()) - 4);
-            break;
+          reg.set (insOp2.get(), reg.get (insOp2.get()) - 4);
+          break;
 
           case 0x7: // not ............... 67-r
-            reg.set (insOp2.get(), ~reg.get (insOp2.get()));
-            break;
+          reg.set (insOp2.get(), ~reg.get (insOp2.get()));
+          break;
 
           case 0xf: // gpc ............... 6f-r
-            reg.set (insOp2.get(), pc.get() + (insOp1.get() << 1));
-            break;
+          reg.set (insOp2.get(), pc.get() + (insOp1.get() << 1));
+          break;
 
           default:
-            throw new InvalidInstructionException();
+          throw new InvalidInstructionException();
         }
         break;
 
       case 0x7: // sh? $i,rd ............. 7dii
-        if (insOpImm.get() > 0)
-          reg.set (insOp0.get(), reg.get (insOp0.get()) << insOpImm.get());
-        else
-          reg.set (insOp0.get(), reg.get (insOp0.get()) >> -insOpImm.get());
-        break;
+      if (insOpImm.get() > 0)
+        reg.set (insOp0.get(), reg.get (insOp0.get()) << insOpImm.get());
+      else
+        reg.set (insOp0.get(), reg.get (insOp0.get()) >> -insOpImm.get());
+      break;
 
       case 0x8: // br a .................. 8-pp  (a = pc + pp * 2)
-        pc.set (pc.get() + (insOpImm.get() << 1));
-        break;
+      pc.set (pc.get() + (insOpImm.get() << 1));
+      break;
 
       case 0x9: // beq rs, a ............. 9rpp  (a = pc + pp * 2)
-        if (reg.get (insOp0.get()) == 0)
-          pc.set (pc.get() + (insOpImm.get() << 1));
-        break;
+      if (reg.get (insOp0.get()) == 0)
+        pc.set (pc.get() + (insOpImm.get() << 1));
+      break;
 
       case 0xa: // bg rs, a .............. arpp  (a = pc + pp * 2)
-        if (reg.get (insOp0.get()) > 0)
-          pc.set (pc.get() + (insOpImm.get() << 1));
-        break;
+      if (reg.get (insOp0.get()) > 0)
+        pc.set (pc.get() + (insOpImm.get() << 1));
+      break;
 
       case 0xb: // j i ................... b--- iiii iiii
-        pc.set (insOpExt.get());
-        break;
+      pc.set (insOpExt.get());
+      break;
 
       case 0xc: // j o(rr) ............... crpp  (pp = o / 2)
-        pc.set ((insOpImm.getUnsigned() << 1) + reg.get (insOp0.get()));
-        break;
+      pc.set ((insOpImm.getUnsigned() << 1) + reg.get (insOp0.get()));
+      break;
 
       case 0xd: // j *o(rr) .............. drpp  (pp = o / 4)
         // TODO
-        break;
-        
+      pc.set (mem.readInteger ((insOpImm.getUnsigned() << 2) + reg.get (insOp0.get())));
+      break;
+      
       case 0xe: // j*(rr,ri,4) ............. eri-
         // TODO
-        break;
+      pc.set (mem.readInteger (reg.get (insOp0.get()) + (reg.get (insOp1.get()) << 2)));
+      break;
 
       case 0xf: // halt or nop ............. f?--
-        if (insOp0.get() == 0)
+      if (insOp0.get() == 0)
           // halt .......................... f0--
-          throw new MachineHaltException();
-        else if (insOp0.getUnsigned() == 0xf)
+        throw new MachineHaltException();
+      else if (insOp0.getUnsigned() == 0xf)
           // nop ........................... ff--
-          break;
         break;
-        
+      break;
+      
       default:
-        throw new InvalidInstructionException();
+      throw new InvalidInstructionException();
     }
   }
 }
