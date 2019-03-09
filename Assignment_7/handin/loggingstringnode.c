@@ -16,17 +16,11 @@ struct LoggingStringNode_class LoggingStringNode_class_table = {
 
 void LoggingStringNode_ctor(void* thisv, char* s) {
     struct LoggingStringNode* this = thisv;
-//    StringNode_ctor(this, s);
     Node_ctor(this);
     this->s = s;
 }
 
 void LoggingStringNode_insert(void* thisv, void* nodev) {
-//    printf("insert ");
-//    struct LoggingStringNode* node = nodev;
-//    Node_print(node);
-//    Node_insert(thisv, nodev);
-    
     struct LoggingStringNode* this = thisv;
     struct LoggingStringNode* node = nodev;
     printf("insert %s\n", node->s);
