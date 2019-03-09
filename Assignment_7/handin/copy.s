@@ -26,8 +26,8 @@ end:    ld $0, r0               # r0 = 0
 #data
 .pos 0x1000
 src:
-.long 1
-.long 2
+.long 0x2080
+.long 0x2080
 .long 0x2080
 .long 0x2080
 .long 0x2080
