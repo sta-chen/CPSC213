@@ -22,11 +22,15 @@ void LoggingStringNode_ctor(void* thisv, char* s) {
 }
 
 void LoggingStringNode_insert(void* thisv, void* nodev) {
-    printf("insert ");
+//    printf("insert ");
+//    struct LoggingStringNode* node = nodev;
+//    Node_print(node);
+//    Node_insert(thisv, nodev);
+    
+    struct LoggingStringNode* this = thisv;
     struct LoggingStringNode* node = nodev;
-    Node_print(node);
-    printf("\n");
-    Node_insert(thisv, nodev);
+    printf("insert %s\n", node->s);
+    Node_insert(this, node);
 }
 
 void* new_LoggingStringNode(char* s) {
