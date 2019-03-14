@@ -1,3 +1,4 @@
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -31,6 +32,9 @@ void fetch() {
 }
 
 int exec() {
+    
+    
+    
     int cont = 1;
     int addr, val;
     switch (insOpCode) {

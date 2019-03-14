@@ -20,7 +20,7 @@
                  .long 0x0                # arg1
                  .long 0x0                # arg2
                  .long 0x0                # arg3
-                 .long 0x0                # return_value
+                 .long 0x0                
 .pos 0x300
                  ld   0x0(r5), r0         # r0 = a
                  ld   0x4(r5), r1         # r1 = b
@@ -38,10 +38,10 @@
                  ld   $0x400, r3          # r3 = jump table
                  j    *(r3, r0, 4)        # goto jump table[a - 10]
 .pos 0x330
-                 add  r1, r2              # r2 = c + b
+                 add  r1, r2              # r2 = c + b; case 10
                  br   L7                  # break
                  not  r2                  
-                 inc  r2                  # r2 = -c
+                 inc  r2                  # r2 = -c; case 12
                  add  r1, r2              # r2 = b - c
                  br   L7                  # break
                  not  r2                  
