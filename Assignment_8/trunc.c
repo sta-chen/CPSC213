@@ -61,7 +61,28 @@ void printString(element_t str) {
 }
 
 // Step 8 TODO
+// foldl need 3 args
+void findSize(element_t* outv, element_t nop, element_t numv) {
+    intptr_t* out = (intptr_t*) outv;
+    intptr_t num = (intptr_t) numv;
+    *out = num + 1;
+}
 
+// foldl need 3 args
+void intoSingleArray(element_t* outv, element_t nop, element_t inv) {
+    char** out = (char**) outv;
+    char* in = (char*) in;
+    
+    intptr_t start = strlen(*out);
+    
+    
+    for (int i = 0; i < strlen(in); i++) {
+        (*out)[start] = in[i];
+        start++;
+    }
+    
+    (*out)[start] = ' ';
+}
 
 
 
@@ -103,12 +124,21 @@ int main(int argc, char** argv) {
     list_foreach(free, truncated_list);
     
     // Step 8 TODO
+    intptr_t size = 0;
+    list_foldl(findSize, (void*) &size, filtered_num_list);
+    
+    char* string = malloc(sizeof(char) * size + 1);
+    list_foldl(intoSingleArray, (void*) &string, truncated_list);
+    string[size] = '\0';
+    
+    printString(string);
     
     // Step 9
     intptr_t v = -1;
     list_foldl(max, (element_t*) &v, filtered_num_list);
     printf("%ld\n", v);
     
+    free(string);
     list_destroy(arg_list);
     list_destroy(i_num_list);
     list_destroy(i_str_list);
