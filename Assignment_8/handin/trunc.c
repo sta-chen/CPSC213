@@ -12,12 +12,13 @@
 
 // Step 2
 void stringToInteger(element_t* outv, element_t inv) {
-    intptr_t* out = (intptr_t*) outv;
+    int** out = (int**) outv;
     char* in = inv;
     char* end;
-    *out = strtol(in, &end, 10);
+    *out = malloc(sizeof(int*));
+    **out = strtol(in, &end, 10);
     if (*end) {
-        *out = -1;
+        **out = -1;
     }
 }
 
@@ -25,15 +26,15 @@ void stringToInteger(element_t* outv, element_t inv) {
 void keepString(element_t* outv, element_t siv, element_t iiv) {
     char** out = (char**) outv;
     char* si = (char*) siv;
-    intptr_t ii = (intptr_t) iiv;
+    int* ii = (int*) iiv;
     
-    *out = ii < 0 ? si : 0;
+    *out = *ii < 0 ? si : 0;
 }
 
 // Step 4
 int isNotNegative(element_t num) {
-    intptr_t i = (intptr_t) num;
-    return i >= 0;
+    int* i = (int*) num;
+    return *i >= 0;
 }
 
 // Step 5
@@ -45,12 +46,12 @@ int isNotNull(element_t str) {
 void truncate(element_t* outv, element_t siv, element_t iiv) {
     char** out = (char**) outv;
     char* si = (char*) siv;
-    intptr_t ii = (intptr_t) iiv;
+    int* ii = (int*) iiv;
     
     *out = strdup(si);
     
-    if (strlen(*out) > ii) {
-        (*out)[ii] = 0;
+    if (strlen(*out) > *ii) {
+        (*out)[*ii] = 0;
     }
 }
 
@@ -63,28 +64,40 @@ void printString(element_t str) {
 // Step 8 TODO
 // foldl need 3 args
 // size correct
-void findSize(element_t* outv, element_t nop, element_t inv) {
-    intptr_t* out = (intptr_t*) outv;
-    intptr_t in = (intptr_t) inv;
-    *out += in + 1;
-}
+//void findSize(element_t* outv, element_t nop, element_t inv) {
+//    intptr_t* out = (intptr_t*) outv;
+//    intptr_t in = (intptr_t) inv;
+//    *out += in + 1;
+//}
 
 // foldl need 3 args
 //TODO URGENT
 void intoSingleArray(element_t* outv, element_t av, element_t bv) {
-    char* a = (char*) av;
-    char* b = (char*) bv;
-    strcat(a, b);
-    strcat(a, " ");
+//    char* a = (char*) av;
+//    char* b = (char*) bv;
+//    strcat(a, b);
+//    strcat(a, " ");
+    char** out = (char**) outv;
+    char* b = bv;
+    *out = realloc(*out, strlen(*out) + strlen(b) + 2);
+    if (strlen(*out)) {
+        strcat(*out, " ");
+    }
+    strcat(*out, b);
 }
 
 
 // Step 9
 void max(element_t* outv, element_t av, element_t bv) {
-    intptr_t* out = (intptr_t*) outv;
-    intptr_t a = (intptr_t) av;
-    intptr_t b = (intptr_t) bv;
-    *out = (a > b) ? a : b;
+    int** out = (int**) outv;
+    int* a = (int*) av;
+    int* b = (int*) bv;
+    **out = (*a > *b) ? *a : *b;
+}
+
+void printInt(element_t numv) {
+    int* num = (int*) numv;
+    printf("%d\n", *num);
 }
 
 int main(int argc, char** argv) {
@@ -118,22 +131,30 @@ int main(int argc, char** argv) {
     
     // Step 8 TODO
     
-    int length = 0, *lp = &length;
-    list_foldl(findSize, (element_t*) &lp, filtered_num_list);
+//    int length = 0, *lp = &length;
+//    list_foldl(findSize, (element_t*) &lp, filtered_num_list);
+//
+//    char r[length + 1];
+//    char* string = r;
+//    string[0] = '\0';
+//    char** sp = &string;
+//    list_foldl(intoSingleArray, (element_t*) sp, truncated_list);
+//    printf("%s\n", r);
     
-    char r[length + 1];
-    char* string = r;
-    string[0] = '\0';
-    char** sp = &string;
-    list_foldl(intoSingleArray, (element_t*) sp, truncated_list);
-    printf("%s\n", r);
+    char* s = malloc(1);
+    s[0] = 0;
+    list_foldl(intoSingleArray, (element_t*) &s, truncated_list);
+    printf("%s\n", s);
+    free(s);
     
     // Step 9
-    intptr_t v = -1;
-    list_foldl(max, (element_t*) &v, filtered_num_list);
-    printf("%ld\n", v);
+    int v = -1;
+    int* vp = &v;
+    list_foldl(max, (element_t*) &vp, filtered_num_list);
+    printf("%d\n", v);
 
     list_foreach(free, truncated_list);
+    list_foreach(free, i_num_list);
     
     list_destroy(arg_list);
     list_destroy(i_num_list);
