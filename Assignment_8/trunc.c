@@ -6,11 +6,13 @@
 //
 
 #include <stdio.h>
+#include <stdint.h>
+#include <string.h>
 #include "list.h"
 
 // Step 2
 void stringToInteger(element_t* outv, element_t inv) {
-    int** out = (int**) outv;
+    intptr_t* out = (intptr_t*) outv;
     char* in = inv;
     char* end;
     *out = strtol(in, &end, 10);
@@ -59,34 +61,9 @@ void printString(element_t str) {
 }
 
 // Step 8 TODO
-void accumulate_size(element_t* out, element_t ignore, element_t num_in) {
-    *(int*)out += (*(int*)num_in) + 1;
-}
 
-/*
- Function for Step 8 (concatenating the string)
- */
-void concatenate_string(element_t* out, element_t ignore, element_t in) {
-    char* out_string = *out;
-    char* in_string = in;
-    
-    // Find the start index to copy characters to
-    int out_index = 0;
-    while (out_string[out_index] != '\0') {
-        out_index++;
-    }
-    
-    // copy the string
-    int in_index = 0;
-    while (in_string[in_index] != '\0') {
-        out_string[out_index] = in_string[in_index];
-        out_index++;
-        in_index++;
-    }
-    // add white space and '\0'
-    out_string[out_index] = ' ';
-    out_string[out_index + 1] = '\0';
-}
+
+
 
 // Step 9
 void max(element_t* outv, element_t av, element_t bv) {
@@ -125,25 +102,7 @@ int main(int argc, char** argv) {
     list_foreach(printString, truncated_list);
     list_foreach(free, truncated_list);
     
-    // Step 8 TODO
-    int size = 0;
-    list_foldl(accumulate_size, (void*) &size, filtered_number_list);
-    
-    char* string = malloc(sizeof(char) * size + 1);
-    
-    // Set the initial char to NULL so concatenate_string knows where to start
-    string[0] = '\0';
-    
-    list_foldl(concatenate_string, (void*) &string, truncated_string_list);
-    
-    // Currently, the string is not null terminated, and string[size] = ' '
-    // So, just change it to '\0'
-    string[size] = '\0';
-    // Note that string ends with 2 NULLs but it doesn't matter because free
-    // doesn't care; no memory issues.
-    
-    // Print it as per instruction
-    print_string(string);
+   
     
     // Step 9
     int* v;
@@ -151,7 +110,6 @@ int main(int argc, char** argv) {
     list_foldl(max, (element_t*) &v, filtered_num_list);
     printf("%ld\n", *v);
     
-    free(string);
     list_destroy(arg_list);
     list_destroy(i_num_list);
     list_destroy(i_str_list);
