@@ -4,7 +4,7 @@
 //
 //  Created by Sta_C on 2019-03-13.
 //
-
+#include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
@@ -67,10 +67,10 @@ void printString(element_t str) {
 
 // Step 9
 void max(element_t* outv, element_t av, element_t bv) {
-    int** out = (int**) outv;
-    int* a = (int*) av;
-    int* b = (int*) bv;
-    *out = (*a > *b) ? a : b;
+    intptr_t* out = (intptr_t*) outv;
+    intptr_t a = (intptr_t) av;
+    intptr_t b = (intptr_t) bv;
+    *out = (a > b) ? a : b;
 }
 
 int main(int argc, char** argv) {
