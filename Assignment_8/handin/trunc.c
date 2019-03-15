@@ -63,11 +63,10 @@ void printString(element_t str) {
 // Step 8 TODO
 // foldl need 3 args
 // size correct
-void findSize(element_t* outv, element_t av, element_t bv) {
+void findSize(element_t* outv, element_t nop, element_t inv) {
     intptr_t* out = (intptr_t*) outv;
-    intptr_t a = (intptr_t) a;
-    intptr_t b = (intptr_t) b;
-    *out = a + b + 1;
+    intptr_t in = (intptr_t) inv;
+    *out += in + 1;
 }
 
 // foldl need 3 args
