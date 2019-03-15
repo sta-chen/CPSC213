@@ -105,8 +105,7 @@ int main(int argc, char** argv) {
    
     
     // Step 9
-    int* v;
-    *v = -1;
+    intptr_t v = -1;
     list_foldl(max, (element_t*) &v, filtered_num_list);
     printf("%ld\n", *v);
     
