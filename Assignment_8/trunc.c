@@ -102,7 +102,7 @@ int main(int argc, char** argv) {
     list_foreach(printString, truncated_list);
     list_foreach(free, truncated_list);
     
-   
+    // Step 8 TODO
     
     // Step 9
     intptr_t v = -1;
