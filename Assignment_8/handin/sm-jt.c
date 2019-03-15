@@ -32,8 +32,44 @@ void fetch() {
 }
 
 int exec() {
-    static const void* jt[] = {&&L0, &&L1, &&L2, &&L3, &&L4, &&DEFAULT, &&L6, &&L7, &&L8, &&L9, &&LA, &&LB, &&LC, &&LD, &&LE, &&LF};
-    static const void* jt_6[] = {&&L60, &&L61, &&L62, &&L63, &&L64, &&L65, &&L66, &&L67, &&DEFAULT6, &&DEFAULT6, &&DEFAULT6, &&DEFAULT6, &&DEFAULT6, &&DEFAULT6, &&DEFAULT6, &&L6F};
+    static const void* jt[] =
+    {
+        &&L0,
+        &&L1,
+        &&L2,
+        &&L3,
+        &&L4,
+        &&DEFAULT,
+        &&L6,
+        &&L7,
+        &&L8,
+        &&L9,
+        &&LA,
+        &&LB,
+        &&LC,
+        &&LD,
+        &&LE,
+        &&LF
+    };
+    static const void* jt_6[] =
+    {
+        &&L60,
+        &&L61,
+        &&L62,
+        &&L63,
+        &&L64,
+        &&L65,
+        &&L66,
+        &&L67,
+        &&DEFAULT6,
+        &&DEFAULT6,
+        &&DEFAULT6,
+        &&DEFAULT6,
+        &&DEFAULT6,
+        &&DEFAULT6,
+        &&DEFAULT6,
+        &&L6F
+    };
     
     int cont = 1;
     int addr, val;
@@ -75,7 +111,7 @@ L6: // ALU ................... 6-sd
     if (insOp0 < 0 || insOp0 > 0xf) {
         goto DEFAULT6;
     } else {
-        goto *jt_6[insop0];
+        goto *jt_6[insOp0];
     }
     
 L60: // mov rs, rd ........ 60sd
