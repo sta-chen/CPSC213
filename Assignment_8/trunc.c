@@ -16,7 +16,7 @@ void stringToInteger(element_t* outv, element_t inv) {
     char* in = inv;
     char* end;
     *out = strtol(in, &end, 10);
-    if (*end != NULL) {
+    if (*end) {
         *out = -1;
     }
 }
@@ -25,15 +25,15 @@ void stringToInteger(element_t* outv, element_t inv) {
 void keepString(element_t* outv, element_t siv, element_t iiv) {
     char** out = (char**) outv;
     char* si = (char*) siv;
-    int* ii = (int*) iiv;
+    intptr_t ii = (intptr_t) iiv;
     
-    *out = *ii < 0 ? si : 0;
+    *out = ii < 0 ? si : 0;
 }
 
 // Step 4
 int isNotNegative(element_t num) {
-    int* i = (int*) num;
-    return *i >= 0;
+    intptr_t i = (intptr_t) num;
+    return i >= 0;
 }
 
 // Step 5
@@ -45,12 +45,12 @@ int isNotNull(element_t str) {
 void truncate(element_t* outv, element_t siv, element_t iiv) {
     char** out = (char**) outv;
     char* si = (char*) siv;
-    int* ii = (int*) iiv;
+    intptr_t ii = (intptr_t) iiv;
     
     *out = strdup(si);
     
-    if (strlen(*out) > *ii) {
-        (*out)[*ii] = 0;
+    if (strlen(*out) > ii) {
+        (*out)[ii] = 0;
     }
 }
 
