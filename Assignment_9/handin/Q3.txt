@@ -1,0 +1,28 @@
+time ./tRead 10
+207
+
+real	0m0.028s
+user	0m0.004s
+sys	0m0.022s
+
+
+time ./tRead 100
+1644
+
+real	0m0.127s
+user	0m0.008s
+sys	0m0.118s
+
+
+time ./tRead 1000
+16193
+
+real	0m1.043s
+user	0m0.028s
+sys	0m1.015s
+
+For real running time:
+tRead is faster than sRead but slower than aRead. tRead is slower than aRead because it handles and reads blocks sequentially. However, it's still faster than sRead because multiple threads are created when reading disk and disk reading performs faster than sRead.
+
+For system running time:
+tRead is slower than both sRead and aRead because multiple threads are created and used. Threads use up the system more in tRead.
