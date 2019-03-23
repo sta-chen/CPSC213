@@ -1,0 +1,26 @@
+time ./sRead 10
+207
+
+real	0m0.114s
+user	0m0.113s
+sys	0m0.000s
+
+
+time ./sRead 100
+1644
+
+real	0m1.103s
+user	0m1.097s
+sys	0m0.005s
+
+
+time ./sRead 1000
+16193
+
+real	0m10.998s
+user	0m10.991s
+sys	0m0.005s
+
+
+The real running time is proportional to the number of blocks being read.
+Because CPU can only read one block at the same time, and it needs a long time to finish reading the current block and then begin to read the next block.

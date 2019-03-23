@@ -1,0 +1,26 @@
+time ./aRead 10
+207
+
+real	0m0.018s
+user	0m0.014s
+sys	0m0.002s
+
+
+time ./aRead 100
+1644
+
+real	0m0.016s
+user	0m0.009s
+sys	0m0.006s
+
+
+time ./aRead 1000
+16193
+
+real	0m0.019s
+user	0m0.012s
+sys	0m0.006s
+
+
+aRead has a significant faster real running time than sRead. And the running time doesn't increase much as the number of reading blocks increasing.
+Because in aRead, the disk reads are performed in parallel. The CPU doesn't have to wait before reading every single block.
