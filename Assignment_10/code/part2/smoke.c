@@ -44,14 +44,14 @@ struct Smoker {
     uthread_cond_t smoke; // could smoke
     struct Agent* agent;
     int tobacco, paper, matches; // the number of tobacco, paper, and matches
-}
+};
 
 struct Smoker* createSmoker(struct Agent* agent) {
     struct Smoker* smoker = malloc(sizeof(struct Smoker));
-    smoker->pm = uthread_cond_create();
-    smoker->tm = uthread_cond_create();
-    smoker->tp = uthread_cond_create();
-    smoker->smoke = uthread_cond_create();
+    smoker->pm = uthread_cond_create(agent->mutex);
+    smoker->tm = uthread_cond_create(agent->mutex);
+    smoker->tp = uthread_cond_create(agent->mutex);
+    smoker->smoke = uthread_cond_create(agent->mutex);
     smoker->agent = agent;
     smoker->tobacco = 0;
     smoker->paper = 0;
@@ -118,19 +118,19 @@ void smoker(struct Smoker* s, enum Resource r, uthread_cond_t waitCond, int* isA
             s->paper = 0;
             s->matches = 0; // resources used to smoke
             uthread_cond_signal(s->pm); // signalling pm
-            uthread_cond_wait(s->smoker); // waiting for smoker
+            uthread_cond_wait(s->smoke); // waiting for smoker
             uthread_cond_signal(s->agent->smoke); // signalling agent
         } else if (s->tobacco && s->matches) {
             s->tobacco = 0;
             s->matches = 0;
             uthread_cond_signal(s->tm);
-            uthread_cond_wait(s->smoker);
+            uthread_cond_wait(s->smoke);
             uthread_cond_signal(s->agent->smoke);
         } else if (s->tobacco && s->paper) {
             s->tobacco = 0;
             s->paper = 0;
             uthread_cond_signal(s->tp);
-            uthread_cond_wait(s->smoker);
+            uthread_cond_wait(s->smoke);
             uthread_cond_signal(s->agent->smoke);
         }
     }
@@ -143,7 +143,7 @@ void smoke(struct Smoker* s, enum Resource r, uthread_cond_t waitCond) {
     while (1) {
         uthread_cond_wait(waitCond); // wait for resources except r
         smoke_count[r]++; // smoker with r is smoking
-        uthread_cond_signal(s->smoker);
+        uthread_cond_signal(s->smoke);
     }
     uthread_mutex_unlock(s->agent->mutex);
 }
@@ -171,7 +171,7 @@ void* smokeWithTobacco(void* sv) {
 // smoker need xx resource
 void* smokerNeedMatches(void* sv) {
     struct Smoker* s = sv;
-    smoker(s, MATCH, s->agent->matches, &s->match);
+    smoker(s, MATCH, s->agent->match, &s->matches);
     return NULL;
 }
 
@@ -196,7 +196,7 @@ int main (int argc, char** argv) {
     uthread_create(smokerNeedMatches, s);
     uthread_create(smokerNeedPaper, s);
     uthread_create(smokerNeedTobacco, s);
-    uthread_create(smokeWithMatch, s)
+    uthread_create(smokeWithMatch, s);
     uthread_create(smokeWithPaper, s);
     uthread_create(smokeWithTobacco, s);
     
