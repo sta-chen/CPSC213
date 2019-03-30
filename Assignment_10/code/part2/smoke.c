@@ -52,10 +52,10 @@ struct Smoker* createSmoker(struct Agent* agent) {
     smoker->tm = uthread_cond_create();
     smoker->tp = uthread_cond_create();
     smoker->smoke = uthread_cond_create();
-    smoker->agent = agent();
-    tobacco = 0;
-    paper = 0;
-    matches = 0;
+    smoker->agent = agent;
+    smoker->tobacco = 0;
+    smoker->paper = 0;
+    smoker->matches = 0;
     return smoker;
 }
 
@@ -107,10 +107,101 @@ void* agent (void* av) {
     return NULL;
 }
 
+// TODO the smoker procedure
+void smoker(struct Smoker* s, enum Resource r, uthread_cond_t waitCond, int* isAvailable) {
+    uthread_mutex_lock(s->agent->mutex);
+    while (1) {
+        uthread_cond_wait(waitCond); // wait for r until available
+        *isAvailable = 1; // now r is available
+        
+        if (s->paper && s->matches) { // need paper and matches to smoke
+            s->paper = 0;
+            s->matches = 0; // resources used to smoke
+            uthread_cond_signal(s->pm); // signalling pm
+            uthread_cond_wait(s->smoker); // waiting for smoker
+            uthread_cond_signal(s->agent->smoke); // signalling agent
+        } else if (s->tobacco && s->matches) {
+            s->tobacco = 0;
+            s->matches = 0;
+            uthread_cond_signal(s->tm);
+            uthread_cond_wait(s->smoker);
+            uthread_cond_signal(s->agent->smoke);
+        } else if (s->tobacco && s->paper) {
+            s->tobacco = 0;
+            s->paper = 0;
+            uthread_cond_signal(s->tp);
+            uthread_cond_wait(s->smoker);
+            uthread_cond_signal(s->agent->smoke);
+        }
+    }
+    uthread_mutex_unlock(s->agent->mutex);
+}
+
+// modify smoke_count
+void smoke(struct Smoker* s, enum Resource r, uthread_cond_t waitCond) {
+    uthread_mutex_lock(s->agent->mutex);
+    while (1) {
+        uthread_cond_wait(waitCond); // wait for resources except r
+        smoke_count[r]++; // smoker with r is smoking
+        uthread_cond_signal(s->smoker);
+    }
+    uthread_mutex_unlock(s->agent->mutex);
+}
+
+// fn pointer for uthread_create
+// smoker already have xx resource
+void* smokeWithMatch(void* sv) {
+    struct Smoker* s = sv;
+    smoke(s, MATCH, s->tp);
+    return NULL;
+}
+
+void* smokeWithPaper(void* sv) {
+    struct Smoker* s = sv;
+    smoke(s, PAPER, s->tm);
+    return NULL;
+}
+
+void* smokeWithTobacco(void* sv) {
+    struct Smoker* s = sv;
+    smoke(s, TOBACCO, s->pm);
+    return NULL;
+}
+
+// smoker need xx resource
+void* smokerNeedMatches(void* sv) {
+    struct Smoker* s = sv;
+    smoker(s, MATCH, s->agent->matches, &s->match);
+    return NULL;
+}
+
+void* smokerNeedPaper(void* sv) {
+    struct Smoker* s = sv;
+    smoker(s, PAPER, s->agent->paper, &s->paper);
+    return NULL;
+}
+
+void* smokerNeedTobacco(void* sv) {
+    struct Smoker* s = sv;
+    smoker(s, PAPER, s->agent->tobacco, &s->tobacco);
+    return NULL;
+}
+
+
 int main (int argc, char** argv) {
     uthread_init (7);
     struct Agent*  a = createAgent();
     // TODO
+    struct Smoker* s = createSmoker(a);
+    uthread_create(smokerNeedMatches, s);
+    uthread_create(smokerNeedPaper, s);
+    uthread_create(smokerNeedTobacco, s);
+    uthread_create(smokeWithMatch, s)
+    uthread_create(smokeWithPaper, s);
+    uthread_create(smokeWithTobacco, s);
+    
+    
+    
     uthread_join (uthread_create (agent, a), 0);
     assert (signal_count [MATCH]   == smoke_count [MATCH]);
     assert (signal_count [PAPER]   == smoke_count [PAPER]);
