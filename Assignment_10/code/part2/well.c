@@ -43,7 +43,7 @@ struct Well* createWell() { // well is global!
     well->typeInWell = 0; // default is LITTLE
     well->waitingCount[LITTLE] = 0;
     well->waitingCount[BIG] = 0;
-    well->isFair = 0; // default is false;
+    well->oppositeWaitingCount = 0;
     return well;
 }
 
@@ -63,13 +63,65 @@ void enterWell (enum Endianness g) {
         int isEmpty = (Well->numInWell == 0);
         int hasSpace = (Well->numInWell < MAX_OCCUPANCY);
         int sameType = (Well->typeInWell == g);
-        
+        int otherTypeWaiting = (Well->waitingCount[oppositeEnd[g]] > 0);
+        int isNotFair = (Well->oppositeWaitingCount >= FAIR_WAITING_COUNT);
+        int turnToOppositeType = (Well->oppositeWaitingCount && isNotFair);
 //        if (Well->numInWell == 0 | (Well->numInWell < MAX_OCCUPANCY))
+        
+//        if (isEmpty) {
+//            Well->littleOrBig[g]++;
+//        }
+        // empty or hasSpace
+        if (isEmpty || hasSpace && sameType && !turnToOppositeType) {
+            if (sameType) {
+                Well->oppositeWaitingCount++; // same type continuously enter the well
+            } else {
+                Well->oppositeWaitingCount = 0; // only one person entered the well with no other person waiting
+            }
+            entryTicker++;
+            break;
+        }
+        
+        // not empty and not same type and no same type is waiting
+        if (!sameType && Well->waitingCount[g] == 0) {
+            Well->oppositeWaitingCount = 0;
+        }
+        Well->waitingCount[g]++; // inc waiting count for type g
+        uthread_cond_wait(Well->littleOrBig[g]); // wait until can enter
+        Well->waitingCount[g]--; // dec waiting count for type g
     }
+    assert(Well->numInWell == 0 || Well->typeInWell == g); // empty or same type in well
+    assert(Well->numInWell < MAX_OCCUPANCY); // numInWell should less than MAX_OCCUPANCY
+    Well->typeInWell = g;
+    Well->numInWell++;
+    occupancyHistogram[Well->typeInWell][Well->numInWell]++;
+    uthread_mutex_unlock(Well->mx);
+    
 }
 
 void leaveWell() {
     // TODO
+    uthread_mutex_lock(Well->mx);
+    Well->numInWell-=;
+    enum Endianness typeIn = Well->typeInWell;
+    enum Endianness typeOut = oppositeEnd[typeIn];
+    int isTypeOutWaiting = (Well->waitingCount[typeOut] > 0);
+    int isNotFair = Well->oppositeWaitingCount >= FAIR_WAITING_COUNT;
+    int isTypeInWaiting = (Well->waitingCount[typeIn] > 0);
+    
+    // opposite type is waiting and [no same type waiting of is not fair]
+    if (isTypeOutWaiting && (!isTypeInWaiting || isNotFair)) {
+        if (Well->numInWell == 0) {
+            for (int i = 0; i < MAX_OCCUPANCY; i++) {
+                // signal opposite type could enter
+                uthread_cond_signal(Well->littleOrBig[typeOut]);
+            }
+        }
+    } else if (isTypeInWaiting) {
+        // signal same type cout enter
+        uthread_cond_signal(Well->littleOrBig[typeIn]);
+    }
+    uthread_mutex_unlock(Well->mutex);
 }
 
 void recordWaitingTime (int waitingTime) {
@@ -86,6 +138,24 @@ void recordWaitingTime (int waitingTime) {
 // You will probably need to create some additional produres etc.
 //
 
+void* person() {
+    enum Endianness e = random() & 1;
+    for (int i = 0; i < NUM_PEOPLE; i++) {
+        int start = entryTicker;
+        enterWell(e);
+        recordWaitingTime(entryTicker - start - 1);
+        for (int j = 0; j < NUM_PEOPLE; j++) {
+            uthread_yield();
+        }
+        leaveWell();
+        for (int j = 0; j < NUM_PEOPLE; j++) {
+            uthread_yield();
+        }
+    }
+    return NULL;
+}
+    
+
 
 int main (int argc, char** argv) {
     uthread_init (1);
@@ -94,6 +164,13 @@ int main (int argc, char** argv) {
     waitingHistogrammutex = uthread_mutex_create ();
     
     // TODO
+    
+    for (int i = 0; i < NUM_PEOPLE; i++) {
+        pt[i] = uthread_create(person, Well);
+    }
+    for (int i = 0; i < NUM_PEOPLE; i++) {
+        uthread_join(pt[i], 0);
+    }
     
     printf ("Times with 1 little endian %d\n", occupancyHistogram [LITTLE]   [1]);
     printf ("Times with 2 little endian %d\n", occupancyHistogram [LITTLE]   [2]);
