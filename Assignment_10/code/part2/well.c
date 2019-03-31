@@ -65,14 +65,14 @@ void enterWell (enum Endianness g) {
         int sameType = (Well->typeInWell == g);
         int otherTypeWaiting = (Well->waitingCount[oppositeEnd[g]] > 0);
         int isNotFair = (Well->oppositeWaitingCount >= FAIR_WAITING_COUNT);
-        int turnToOppositeType = (Well->oppositeWaitingCount && isNotFair);
+        int turnToOppositeType = (otherTypeWaiting && isNotFair);
 //        if (Well->numInWell == 0 | (Well->numInWell < MAX_OCCUPANCY))
         
 //        if (isEmpty) {
 //            Well->littleOrBig[g]++;
 //        }
         // empty or hasSpace
-        if (isEmpty || hasSpace && sameType && !turnToOppositeType) {
+        if (isEmpty || (hasSpace && sameType && !turnToOppositeType)) {
             if (sameType) {
                 Well->oppositeWaitingCount++; // same type continuously enter the well
             } else {
@@ -140,7 +140,7 @@ void recordWaitingTime (int waitingTime) {
 
 void* person() {
     enum Endianness e = random() & 1;
-    for (int i = 0; i < NUM_PEOPLE; i++) {
+    for (int i = 0; i < NUM_ITERATIONS; i++) {
         int start = entryTicker;
         enterWell(e);
         recordWaitingTime(entryTicker - start - 1);
