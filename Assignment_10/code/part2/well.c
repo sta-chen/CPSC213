@@ -30,15 +30,15 @@ struct Well {
     int numInWell;
     enum Endianness typeInWell;
     int waitingCount[2];
-    int isFair;
+    int oppositeWaitingCount;
 };
 
 struct Well* createWell() { // well is global!
     struct Well* well = malloc (sizeof (struct Well));
     // TODO
     well->mx = uthread_mutex_create();
-    well->littleOrBig[LITTLE] = 0;
-    well->littleOrBig[BIG] = 0;
+    well->littleOrBig[LITTLE] = uthread_cond_create(well->mx);
+    well->littleOrBig[BIG] = uthread_cond_create(well->mx);
     well->numInWell = 0;
     well->typeInWell = 0; // default is LITTLE
     well->waitingCount[LITTLE] = 0;
@@ -102,7 +102,7 @@ void enterWell (enum Endianness g) {
 void leaveWell() {
     // TODO
     uthread_mutex_lock(Well->mx);
-    Well->numInWell-=;
+    Well->numInWell--;
     enum Endianness typeIn = Well->typeInWell;
     enum Endianness typeOut = oppositeEnd[typeIn];
     int isTypeOutWaiting = (Well->waitingCount[typeOut] > 0);
@@ -121,7 +121,7 @@ void leaveWell() {
         // signal same type cout enter
         uthread_cond_signal(Well->littleOrBig[typeIn]);
     }
-    uthread_mutex_unlock(Well->mutex);
+    uthread_mutex_unlock(Well->mx);
 }
 
 void recordWaitingTime (int waitingTime) {
